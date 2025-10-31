@@ -44,21 +44,21 @@ export default function ArtworksTable() {
       const response = await fetch(url);
       const json = await response.json();
 
-      const dataArr = (json.data ?? []) as Partial<Artwork>[];
+      const dataArr = json.data ?? [];
       const total =
         json.pagination?.total ??
         (json.pagination?.total_pages
           ? json.pagination.total_pages * perPage
           : 0);
 
-      const pageRows: Artwork[] = dataArr.map((item) => ({
-        id: item.id ?? 0,
+      const pageRows: Artwork[] = dataArr.map((item: any) => ({
+        id: item.id,
         title: item.title ?? "Untitled",
         place_of_origin: item.place_of_origin ?? "-",
         artist_display: item.artist_display ?? "-",
         inscriptions: item.inscriptions ?? "-",
-        date_start: item.date_start ?? null,
-        date_end: item.date_end ?? null,
+        date_start: item.date_start ?? "-",
+        date_end: item.date_end ?? "-",
       }));
 
       setRows(pageRows);
@@ -128,7 +128,10 @@ export default function ArtworksTable() {
 
   /** 🎨 "ID" header with dropdown to choose number of rows */
   const idHeaderWithDropdown = (
-    <div className="flex items-center gap-1 relative" ref={iconRef}>
+    <div
+      className="flex items-center gap-1 relative"
+      ref={iconRef}
+    >
       <span className="text-gray-200 font-medium">ID</span>
 
       <div className="relative flex items-center">
@@ -188,59 +191,35 @@ export default function ArtworksTable() {
 
   return (
     // <div className="min-h-auto bg-gray-900 text-white flex flex-col items-center py-10 px-6">
-    <div className="w-full max-w-7xl bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700">
-      <DataTable
-        value={rows}
-        paginator
-        lazy
-        rows={rowsPerPage}
-        totalRecords={totalRecords}
-        paginatorPosition="bottom"
-        onPage={onPage}
-        first={(page - 1) * rowsPerPage}
-        loading={loading}
-        selection={currentPageSelection}
-        onSelectionChange={(e) => onSelectionChange(e.value)}
-        selectionMode="multiple"
-        dataKey="id"
-        scrollHeight="480px"
-        header={`Page ${page} — ${totalRecords} total (Server-side)`}
-        className="text-gray-200"
-      >
-        <Column selectionMode="multiple" headerStyle={{ width: "4rem" }} />
-        <Column
-          field="id"
-          header={idHeaderWithDropdown}
-          style={{ minWidth: "5rem" }}
-        />
-        <Column field="title" header="Title" style={{ minWidth: "12rem" }} />
-        <Column
-          field="place_of_origin"
-          header="Place"
-          style={{ minWidth: "8rem" }}
-        />
-        <Column
-          field="artist_display"
-          header="Artist"
-          style={{ minWidth: "10rem" }}
-        />
-        <Column
-          field="inscriptions"
-          header="Inscriptions"
-          style={{ minWidth: "8rem" }}
-        />
-        <Column
-          field="date_start"
-          header="Date Start"
-          style={{ minWidth: "8rem" }}
-        />
-        <Column
-          field="date_end"
-          header="Date End"
-          style={{ minWidth: "8rem" }}
-        />
-      </DataTable>
-    </div>
+      <div className="w-full max-w-7xl bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700">
+        <DataTable
+          value={rows}
+          paginator
+          lazy
+          rows={rowsPerPage}
+          totalRecords={totalRecords}
+          paginatorPosition="bottom"
+          onPage={onPage}
+          first={(page - 1) * rowsPerPage}
+          loading={loading}
+          selection={currentPageSelection}
+          onSelectionChange={(e) => onSelectionChange(e.value)}
+          selectionMode="multiple"
+          dataKey="id"
+          scrollHeight="480px"
+          header={`Page ${page} — ${totalRecords} total (Server-side)`}
+          className="text-gray-200"
+        >
+          <Column selectionMode="multiple" headerStyle={{ width: "4rem" }} />
+          <Column field="id" header={idHeaderWithDropdown} style={{ minWidth: "5rem" }} />
+          <Column field="title" header="Title" style={{ minWidth: "12rem" }} />
+          <Column field="place_of_origin" header="Place" style={{ minWidth: "8rem" }} />
+          <Column field="artist_display" header="Artist" style={{ minWidth: "10rem" }} />
+          <Column field="inscriptions" header="Inscriptions" style={{ minWidth: "8rem" }} />
+          <Column field="date_start" header="Date Start" style={{ minWidth: "8rem" }} />
+          <Column field="date_end" header="Date End" style={{ minWidth: "8rem" }} />
+        </DataTable>
+      </div>
     // </div>
   );
 }
