@@ -44,21 +44,21 @@ export default function ArtworksTable() {
       const response = await fetch(url);
       const json = await response.json();
 
-      const dataArr = json.data ?? [];
+      const dataArr = (json.data ?? []) as Partial<Artwork>[];
       const total =
         json.pagination?.total ??
         (json.pagination?.total_pages
           ? json.pagination.total_pages * perPage
           : 0);
 
-      const pageRows: Artwork[] = dataArr.map((item: any) => ({
-        id: item.id,
+      const pageRows: Artwork[] = dataArr.map((item) => ({
+        id: item.id ?? 0,
         title: item.title ?? "Untitled",
         place_of_origin: item.place_of_origin ?? "-",
         artist_display: item.artist_display ?? "-",
         inscriptions: item.inscriptions ?? "-",
-        date_start: item.date_start ?? "-",
-        date_end: item.date_end ?? "-",
+        date_start: item.date_start ?? null,
+        date_end: item.date_end ?? null,
       }));
 
       setRows(pageRows);
