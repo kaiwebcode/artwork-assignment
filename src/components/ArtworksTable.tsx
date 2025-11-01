@@ -7,10 +7,11 @@ import { Button } from "primereact/button";
 import { ChevronDownIcon } from "lucide-react";
 import type { Artwork } from "../types/type";
 
-const API_BASE = "https://api.artic.edu/api/v1/artworks";
+// const API_BASE = "https://api.artic.edu/api/v1/artworks";
+const API_BASE = import.meta.env.VITE_API_BASE as string;
 
 export default function ArtworksTable() {
-  // Table state
+
   const [rows, setRows] = useState<Artwork[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -19,23 +20,21 @@ export default function ArtworksTable() {
   const [rowsPerPage, setRowsPerPage] = useState<number>(12);
   const [totalRecords, setTotalRecords] = useState<number>(0);
 
-  // Selection state
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   const [selectCount, setSelectCount] = useState<number>(0);
 
-  // Overlay refs
   const overlayRef = useRef<OverlayPanel>(null);
   const iconRef = useRef<HTMLDivElement>(null);
 
   const currentPageSelection = rows.filter((r) => selectedIds.has(r.id));
 
-  /** 🔄 Handle pagination changes */
+  /** Handle pagination changes */
   const onPage = (event: DataTablePageEvent) => {
     setPage(event.page! + 1);
     setRowsPerPage(event.rows!);
   };
 
-  /** 📦 Fetch a specific page from API */
+  /** Fetch a particular page from API */
   const fetchPage = useCallback(async (pageNum: number, perPage: number) => {
     setLoading(true);
 
@@ -75,7 +74,7 @@ export default function ArtworksTable() {
     fetchPage(page, rowsPerPage);
   }, [fetchPage, page, rowsPerPage]);
 
-  /** ✅ Handle selecting a custom number of rows dynamically */
+  /** Handle selecting a custom number of rows dynamically */
   const handleSelectRows = async () => {
     if (!selectCount || selectCount <= 0) {
       overlayRef.current?.hide();
@@ -116,7 +115,7 @@ export default function ArtworksTable() {
     overlayRef.current?.hide();
   };
 
-  /** 🟦 Manage selection toggle per row */
+  /** Manage selection toggle per row */
   const onSelectionChange = (newSelectionRows: Artwork[]) => {
     const newSet = new Set(selectedIds);
     rows.forEach((r) => {
@@ -126,7 +125,7 @@ export default function ArtworksTable() {
     setSelectedIds(newSet);
   };
 
-  /** 🎨 "ID" header with dropdown to choose number of rows */
+  /** dropdown to choose number of rows */
   const idHeaderWithDropdown = (
     <div
       className="flex items-center gap-1 relative"
@@ -137,7 +136,7 @@ export default function ArtworksTable() {
       <div className="relative flex items-center">
         <ChevronDownIcon
           size={16}
-          className="ml-1 cursor-pointer text-blue-400 hover:text-blue-500 transition-transform hover:rotate-180 duration-200"
+          className="ml-1 cursor-pointer text-blue-400 hover:text-blue-500 transition-transform hover:animate-bounce duration-200"
           onClick={(e) => overlayRef.current?.toggle(e)}
         />
 
@@ -149,11 +148,11 @@ export default function ArtworksTable() {
           style={{
             borderRadius: "0.6rem",
             background: "#1f2937",
-            color: "white",
+            color: "transparent",
             padding: "1rem",
             minWidth: "220px",
             boxShadow: "0 8px 25px rgba(0,0,0,0.3)",
-            marginTop: "8px",
+            marginTop: "250px",
           }}
         >
           <div className="flex flex-col gap-3">
@@ -164,7 +163,7 @@ export default function ArtworksTable() {
             <InputNumber
               value={selectCount}
               onValueChange={(e) => setSelectCount(e.value ?? 0)}
-              placeholder="Enter number..."
+              placeholder="Enter number of rows..."
               min={1}
               inputStyle={{
                 width: "100%",
@@ -180,7 +179,7 @@ export default function ArtworksTable() {
               label="Submit"
               onClick={handleSelectRows}
               size="small"
-              className="w-full text-sm py-2 rounded-md"
+              className="w-full text-sm py-2 rounded-md text-white"
               style={{ background: "#3B82F6", border: "none" }}
             />
           </div>
@@ -210,7 +209,7 @@ export default function ArtworksTable() {
           header={`Page ${page} — ${totalRecords} total (Server-side)`}
           className="text-gray-200"
         >
-          <Column selectionMode="multiple" headerStyle={{ width: "4rem" }} />
+          <Column selectionMode="multiple" headerStyle={{ width: "2rem" }} />
           <Column field="id" header={idHeaderWithDropdown} style={{ minWidth: "5rem" }} />
           <Column field="title" header="Title" style={{ minWidth: "12rem" }} />
           <Column field="place_of_origin" header="Place" style={{ minWidth: "8rem" }} />
